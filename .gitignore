@@ -6,7 +6,7 @@ target/
 
 ### STS ###
 .apt_generated
-git
+gig
 
 ### IntelliJ IDEA ###
 .idea
