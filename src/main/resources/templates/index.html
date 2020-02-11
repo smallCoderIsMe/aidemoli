@@ -1,59 +1,86 @@
 <!DOCTYPE HTML>
-<html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>aidemoli</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/bootstrap-theme.css">
+    <link rel="stylesheet" href="css/common.css">
     <script src="js/jquery-3.3.1.js"></script>
     <script src="js/bootstrap.min.js"></script>
-    <style>
-        .right{
-            float:right;
-        }
-    </style>
 </head>
 <body>
-<nav class="navbar navbar-default" role="navigation">
-    <div class="container-fluid">
-        <div class="navbar-header">
-            <a class="navbar-brand" href="#">爱的魔力</a>
-        </div>
-        <div>
-            <ul class="nav navbar-nav">
-                <li class="active"><a href="#">iOS</a></li>
-                <li><a href="https://github.com/login/oauth/authorize?client_id=0c2df22af71a30a90d68&redirect_uri=http://localhost:8080/callback&scope=user&state=1">登陆</a></li>
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                        用户
-                        <b class="caret"></b>
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a href="#">jmeter</a></li>
-                        <li><a href="#">EJB</a></li>
-                        <li><a href="#">Jasper Report</a></li>
-                        <li class="divider"></li>
-                        <li><a href="#">分离的链接</a></li>
-                        <li class="divider"></li>
-                        <li><a href="#">另一个分离的链接</a></li>
-                    </ul>
+<div>
+    <div th:insert="nav :: navigation"></div>
+</div>
+<div class="container-fluid main">
+    <div class="row">
+        <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
+            <h3><span class="glyphicon glyphicon-list" aria-hidden="true"></span> 发现</h3>
+            <ul class="nav nav-tabs">
+                <li role="presentation">
+                    <a href="/?sort=new">最新</a>
+                </li>
+                <li role="presentation">
+                    <a href="/?sort=hot30">30天最热</a>
+                </li>
+                <li role="presentation">
+                    <a href="/?sort=hot7">7天最热</a>
+                </li>
+                <li role="presentation">
+                    <a href="/?sort=hot">最热</a>
+                </li>
+                <li role="presentation">
+                    <a href="/?sort=no" class="red">消灭零回复</a>
                 </li>
             </ul>
-        </div>
-        <div class="right">
-            <form class="navbar-form navbar-left" role="search">
-                <div class="form-group">
-                    <input type="text" class="form-control" placeholder="搜索">
+            <div class="media" th:each="question : ${pagination.questions}">
+                <div class="media-left">
+                    <a href="#">
+                        <img class="media-object"
+                             th:src="${question.user.avatarUrl}">
+                    </a>
                 </div>
-                <button type="submit" class="btn btn-default">提交按钮</button>
-            </form>
-            <button type="button" class="btn btn-default navbar-btn">
-                导航栏
-            </button>
+                <div class="media-body">
+                    <h4 class="media-heading">
+                        <a th:href="@{'/question/'+${question.id}}" th:text="${question.title}"></a>
+                    </h4>
+                    <span class="text-desc"><span th:text="${question.commentCount}"></span> 个回复 •
+                        <span th:text="${question.viewCount}"></span> 次浏览 •
+                        <span th:text="${#dates.format(question.gmtCreate,'yyyy-MM-dd HH:mm')}"></span>
+                    </span>
+                </div>
+            </div>
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+                    <li th:if="${pagination.showFirstPage}">
+                        <a href="/?page=1" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;&laquo;</span>
+                        </a>
+                    </li>
+                    <li th:if="${pagination.showPrevious}">
+                        <a th:href="@{/(page=${pagination.currentPage}-1)}" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    <li th:each="page:${pagination.pages}" th:class="${pagination.currentPage == page}? 'active':''"><a th:href="@{/(page=${page})}" th:text="${page}" ></a></li>
+                    <li th:if="${pagination.showNext}">
+                        <a th:href="@{/(page=${pagination.currentPage}+1)}"  aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                    <li th:if="${pagination.showEndPage}">
+                        <a th:href="@{/(page=${pagination.totalPage})}" aria-label="Next">
+                            <span aria-hidden="true">&raquo;&raquo;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12">
+            <h3>热门话题</h3>
         </div>
     </div>
-</nav>
-
-
+</div>
 </body>
 </html>
