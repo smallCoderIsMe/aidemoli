@@ -33,10 +33,7 @@ public class QuestionService {
         List<Question> questions = questionMapper.list(offset,size);
         List<QuestionDTO> questionDTOList = new ArrayList<>();
         for (Question question : questions) {
-            List<User> users = userMapper.findByAccountId(question.getCreator());
-            User user = null;
-            if(users != null && users.size() !=0)
-                user = users.get(0);
+            User user = userMapper.findByAccountId(question.getCreator());
             QuestionDTO questionDTO = new QuestionDTO();
             BeanUtils.copyProperties(question,questionDTO);
             questionDTO.setUser(user);
@@ -59,10 +56,7 @@ public class QuestionService {
         List<Question> questions = questionMapper.listByAccountId(accountId,offset,size);
         List<QuestionDTO> questionDTOList = new ArrayList<>();
         for (Question question : questions) {
-            List<User> users = userMapper.findByAccountId(question.getCreator());
-            User user = null;
-            if(users != null && users.size() !=0)
-                user = users.get(0);
+            User user = userMapper.findByAccountId(question.getCreator());
             QuestionDTO questionDTO = new QuestionDTO();
             BeanUtils.copyProperties(question,questionDTO);
             questionDTO.setUser(user);
@@ -76,9 +70,8 @@ public class QuestionService {
         Question question = questionMapper.getById(id);
         QuestionDTO questionDTO = new QuestionDTO();
         BeanUtils.copyProperties(question,questionDTO);
-        List<User> users =  userMapper.findByAccountId(question.getCreator());
-        if(users != null && users.size() > 0)
-            questionDTO.setUser(users.get(0));
+        User user =  userMapper.findByAccountId(question.getCreator());
+        questionDTO.setUser(user);
         return questionDTO;
     }
 }

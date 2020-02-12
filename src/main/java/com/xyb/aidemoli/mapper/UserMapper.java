@@ -1,12 +1,7 @@
 package com.xyb.aidemoli.mapper;
 
 import com.xyb.aidemoli.model.User;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
-
-import java.util.List;
+import org.apache.ibatis.annotations.*;
 
 @Mapper
 public interface UserMapper {
@@ -18,5 +13,8 @@ public interface UserMapper {
     User findByToken(@Param("token") String token);
 
     @Select("select * from user where account_id = #{accountId}")
-    List<User> findByAccountId(Integer accountId);
+    User findByAccountId(String accountId);
+
+    @Update("update user set name = #{name},avatar_url = #{avatarUrl},token = #{token},bio=#{bio},gmt_modified=#{gmtModified} where id = #{id}")
+    void update(User dbUser);
 }

@@ -58,7 +58,7 @@ public class PublishController {
                 .title(title)
                 .description(description)
                 .tag(tag)
-                .creator(Integer.parseInt(user.getAccountId()))
+                .creator(user.getAccountId())
                 .gmtCreate(System.currentTimeMillis())
                 .gmtModified(System.currentTimeMillis())
                 .likeCount(0)

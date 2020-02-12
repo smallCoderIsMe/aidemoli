@@ -5,12 +5,15 @@ import com.xyb.aidemoli.dto.GithubUser;
 import com.xyb.aidemoli.mapper.UserMapper;
 import com.xyb.aidemoli.model.User;
 import com.xyb.aidemoli.provider.GithubProvider;
+import com.xyb.aidemoli.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.UUID;
 
@@ -20,7 +23,7 @@ public class AuthorizeController {
     private GithubProvider githubProvider;
 
     @Autowired
-    private UserMapper userMapper;
+    private UserService userService;
 
     @Value("${github.client.id}")
     private String clientId;
@@ -42,21 +45,31 @@ public class AuthorizeController {
                 .state(state)
                 .build();
         String accessToken = githubProvider.getAccessToken(accessTokenDTO);
+        if(accessToken == null){
+            return "redirect:/";
+        }
         GithubUser githubUser = githubProvider.getUser(accessToken);
         if(githubUser!=null){
             User user = User.builder().accountId(String.valueOf(githubUser.getId()))
                     .name(githubUser.getName())
-                    .gmtCreate(System.currentTimeMillis())
-                    .gmtModified(System.currentTimeMillis())
                     .token(UUID.randomUUID().toString())
                     .avatarUrl(githubUser.getAvatar_url())
                     .build();
+            userService.createOrUpdate(user);
             response.addCookie(new Cookie("token",user.getToken()));
-            userMapper.insert(user);
             return "redirect:/";
         }else {
             return "redirect:/";
         }
     }
 
+    @RequestMapping("/logout")
+    public String logout(HttpServletRequest request,
+                         HttpServletResponse response){
+        request.getSession().removeAttribute("user");
+        Cookie cookie = new Cookie("token",null);
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
+        return "redirect:/";
+    }
 }
